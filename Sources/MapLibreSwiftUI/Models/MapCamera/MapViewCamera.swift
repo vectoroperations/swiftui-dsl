@@ -12,6 +12,7 @@ public struct MapViewCamera: Hashable {
         public static let pitch: Double = 0
         public static let pitchRange: CameraPitchRange = .free
         public static let direction: CLLocationDirection = 0
+        public static let animation = CameraAnimationConfig.default
     }
 
     public var state: CameraState
@@ -21,13 +22,15 @@ public struct MapViewCamera: Hashable {
     /// This can be used to see if the camera programmatically moved,
     /// or manipulated through a user gesture.
     public var lastReasonForChange: CameraChangeReason?
+    
+    public var animation: CameraAnimationConfig
 
     /// A camera centered at 0.0, 0.0. This is typically used as a backup,
     /// pre-load for an expected camera update (e.g. before a location provider produces
     /// it's first location).
     ///
     /// - Returns: The constructed MapViewCamera.
-    public static func `default`() -> MapViewCamera {
+    public static func `default`(animation: CameraAnimationConfig = Defaults.animation) -> MapViewCamera {
         MapViewCamera(
             state: .centered(
                 onCoordinate: Defaults.coordinate,
@@ -36,7 +39,8 @@ public struct MapViewCamera: Hashable {
                 pitchRange: Defaults.pitchRange,
                 direction: Defaults.direction
             ),
-            lastReasonForChange: .programmatic
+            lastReasonForChange: .programmatic,
+            animation: animation
         )
     }
 
@@ -53,7 +57,8 @@ public struct MapViewCamera: Hashable {
                               pitch: Double = Defaults.pitch,
                               pitchRange: CameraPitchRange = Defaults.pitchRange,
                               direction: CLLocationDirection = Defaults.direction,
-                              reason: CameraChangeReason? = nil) -> MapViewCamera
+                              reason: CameraChangeReason? = nil,
+                              animation: CameraAnimationConfig = Defaults.animation) -> MapViewCamera
     {
         MapViewCamera(
             state: .centered(
@@ -63,7 +68,8 @@ public struct MapViewCamera: Hashable {
                 pitchRange: pitchRange,
                 direction: direction
             ),
-            lastReasonForChange: reason
+            lastReasonForChange: reason,
+            animation: animation
         )
     }
 
@@ -79,12 +85,14 @@ public struct MapViewCamera: Hashable {
     public static func trackUserLocation(zoom: Double = Defaults.zoom,
                                          pitch: Double = Defaults.pitch,
                                          pitchRange: CameraPitchRange = Defaults.pitchRange,
-                                         direction: CLLocationDirection = Defaults.direction) -> MapViewCamera
+                                         direction: CLLocationDirection = Defaults.direction,
+                                         animation: CameraAnimationConfig = Defaults.animation) -> MapViewCamera
     {
         // Coordinate is ignored when tracking user location. However, pitch and zoom are valid.
         MapViewCamera(
             state: .trackingUserLocation(zoom: zoom, pitch: pitch, pitchRange: pitchRange, direction: direction),
-            lastReasonForChange: .programmatic
+            lastReasonForChange: .programmatic,
+            animation: animation
         )
     }
 
@@ -100,11 +108,12 @@ public struct MapViewCamera: Hashable {
     public static func trackUserLocationWithHeading(
         zoom: Double = Defaults.zoom,
         pitch: Double = Defaults.pitch,
-        pitchRange: CameraPitchRange = Defaults.pitchRange
+        pitchRange: CameraPitchRange = Defaults.pitchRange,
+        animation: CameraAnimationConfig = Defaults.animation
     ) -> MapViewCamera {
         // Coordinate is ignored when tracking user location. However, pitch and zoom are valid.
         MapViewCamera(state: .trackingUserLocationWithHeading(zoom: zoom, pitch: pitch, pitchRange: pitchRange),
-                      lastReasonForChange: .programmatic)
+                      lastReasonForChange: .programmatic, animation: animation)
     }
 
     /// Enables user location tracking within the MapView.
@@ -119,11 +128,12 @@ public struct MapViewCamera: Hashable {
     public static func trackUserLocationWithCourse(
         zoom: Double = Defaults.zoom,
         pitch: Double = Defaults.pitch,
-        pitchRange: CameraPitchRange = Defaults.pitchRange
+        pitchRange: CameraPitchRange = Defaults.pitchRange,
+        animation: CameraAnimationConfig = Defaults.animation
     ) -> MapViewCamera {
         // Coordinate is ignored when tracking user location. However, pitch and zoom are valid.
         MapViewCamera(state: .trackingUserLocationWithCourse(zoom: zoom, pitch: pitch, pitchRange: pitchRange),
-                      lastReasonForChange: .programmatic)
+                      lastReasonForChange: .programmatic, animation: animation)
     }
 
     /// Positions the camera to show a specific region in the MapView.
@@ -134,9 +144,10 @@ public struct MapViewCamera: Hashable {
     /// - Returns: The MapViewCamera representing the scenario
     public static func boundingBox(
         _ box: MLNCoordinateBounds,
-        edgePadding: UIEdgeInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+        edgePadding: UIEdgeInsets = .init(top: 20, left: 20, bottom: 20, right: 20),
+        animation: CameraAnimationConfig = Defaults.animation
     ) -> MapViewCamera {
         MapViewCamera(state: .rect(boundingBox: box, edgePadding: edgePadding),
-                      lastReasonForChange: .programmatic)
+                      lastReasonForChange: .programmatic, animation: animation)
     }
 }

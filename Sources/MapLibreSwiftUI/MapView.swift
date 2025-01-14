@@ -72,10 +72,12 @@ public struct MapView<T: MapViewHostViewController>: UIViewControllerRepresentab
         case let .url(styleURL):
             controller.mapView.styleURL = styleURL
         }
-
+        
+        //Always disable animation for initial setup
+        let shouldAnimate = false
         context.coordinator.updateCamera(mapView: controller.mapView,
                                          camera: $camera.wrappedValue,
-                                         animated: false)
+                                         animated: shouldAnimate)
         controller.mapView.locationManager = controller.mapView.locationManager
 
         // Link the style loaded to the coordinator that emits the delegate event.
@@ -99,12 +101,15 @@ public struct MapView<T: MapViewHostViewController>: UIViewControllerRepresentab
         context.coordinator.updateLayers(mapView: uiViewController.mapView)
 
         // FIXME: This isn't exactly telling us if the *map* is loaded, and the docs for setCenter say it needs to be.
-        let isStyleLoaded = uiViewController.mapView.style != nil
+        // Respect both the style being loaded AND the animation configuration
+        let shouldAnimate = uiViewController.mapView.style != nil && camera.animation.mode != .none
+        
+        print("shouldAnimate: \(shouldAnimate)")
 
         if cameraDisabled == false {
             context.coordinator.updateCamera(mapView: uiViewController.mapView,
                                              camera: camera,
-                                             animated: isStyleLoaded)
+                                             animated: shouldAnimate)
         }
     }
 
