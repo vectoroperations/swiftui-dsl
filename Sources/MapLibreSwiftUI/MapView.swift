@@ -103,8 +103,6 @@ public struct MapView<T: MapViewHostViewController>: UIViewControllerRepresentab
         // FIXME: This isn't exactly telling us if the *map* is loaded, and the docs for setCenter say it needs to be.
         // Respect both the style being loaded AND the animation configuration
         let shouldAnimate = uiViewController.mapView.style != nil && camera.animation.mode != .none
-        
-        print("shouldAnimate: \(shouldAnimate)")
 
         if cameraDisabled == false {
             context.coordinator.updateCamera(mapView: uiViewController.mapView,
