@@ -20,6 +20,7 @@ import MapLibreSwiftMacros
 @MLNStyleProperty<UIColor>("textHaloColor", supportsInterpolation: true)
 @MLNStyleProperty<Double>("textHaloWidth", supportsInterpolation: true)
 @MLNStyleProperty<Double>("textHaloBlur", supportsInterpolation: true)
+@MLNStyleProperty<Bool>("textAllowsOverlap", supportsInterpolation: false)
 
 public struct SymbolStyleLayer: SourceBoundVectorStyleLayerDefinition {
     public let identifier: String
@@ -156,6 +157,7 @@ private struct SymbolStyleLayerInternal: StyleLayer {
         result.textHaloColor = definition.textHaloColor
         result.textHaloWidth = definition.textHaloWidth
         result.textHaloBlur = definition.textHaloBlur
+        result.textAllowsOverlap = definition.textAllowsOverlap
 
         result.predicate = definition.predicate
 
